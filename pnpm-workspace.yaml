@@ -1,0 +1,7 @@
+packages:
+  - ct-solid/**
+  - ct-qwik/**
+  - playwright-ct-solid/**
+  - playwright-ct-qwik/**
+onlyBuiltDependencies:
+  - esbuild
