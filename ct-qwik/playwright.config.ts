@@ -34,13 +34,13 @@ export default defineConfig({
         }
       }
     },
-    baseURL: 'http://localhost:5173',
+    // baseURL: 'http://localhost:5173',
   },
-  webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
-  },
+  // webServer: {
+  //   command: 'pnpm dev',
+  //   url: 'http://localhost:5173',
+  //   reuseExistingServer: !process.env.CI,
+  // },
   projects: [
     {
       name: 'chromium',
