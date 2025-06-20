@@ -109,7 +109,9 @@ window.playwrightMount = async (component, rootElement, hooksConfig) => {
       App = () => wrapper;
   }
 
-  const ssrResult = await renderToString(App());
+  const ssrResult = await renderToString(App(), {
+    containerTagName: 'div',
+  });
   console.log('SSR result:', ssrResult.html);
 
   rootElement.innerHTML = ssrResult.html;
