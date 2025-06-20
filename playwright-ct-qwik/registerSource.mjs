@@ -17,7 +17,7 @@
 // @ts-check
 // This file is injected into the registry as text, no dependencies are allowed.
 
-import { render } from "@builder.io/qwik";
+import { renderToString } from "@builder.io/qwik/server";
 import { jsx } from "@builder.io/qwik";
 
 /** @typedef {import('@playwright/experimental-ct-core/types/component').JsxComponent} JsxComponent */
@@ -64,10 +64,13 @@ window.playwrightMount = async (component, rootElement, hooksConfig) => {
       App = () => wrapper;
   }
 
-  const unmount = await render(rootElement, App());
-  rootElement[__pwUnmountKey] = unmount;
+  const ssrResult = await renderToString(jsx(App, {}));
 
-  // Run after mount hooks
+  rootElement.innerHTML = ssrResult.html;
+  rootElement[__pwUnmountKey] = () => {
+    rootElement.innerHTML = '';
+  };
+
   for (const hook of window.__pw_hooks_after_mount || [])
     await hook({ hooksConfig });
 };
