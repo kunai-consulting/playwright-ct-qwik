@@ -1,13 +1,13 @@
-import { component$, type PropsOf } from '@builder.io/qwik';
+import { $, component$, type PropsOf } from '@builder.io/qwik';
 
 type ButtonProps = {
   title: string;
-  onClick: (data: string) => void;
-} & PropsOf<'button'>;
+  onHello$: (data: string) => void;
+};
 
-export const Button = component$(({ onClick, title, ...attributes }: ButtonProps) => {
+export const Button = component$(({ onHello$, title, ...attributes }: ButtonProps) => {
   return (
-    <button {...attributes} onClick$={() => onClick?.('hello')}>
+    <button {...attributes} onClick$={$(() => console.log('clicked'))}>
       {title}
     </button>
   )
