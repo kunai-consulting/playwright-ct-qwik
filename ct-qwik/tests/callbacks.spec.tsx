@@ -1,5 +1,7 @@
+/** @jsxImportSource @builder.io/qwik */
+
 import { test, expect } from "@kunai-consulting/experimental-ct-qwik";
-import { Button } from "@/components/button";
+import { Button } from "../src/components/button";
 
 test("execute callback when the button is clicked", async ({ mount }) => {
 	const messages: string[] = [];

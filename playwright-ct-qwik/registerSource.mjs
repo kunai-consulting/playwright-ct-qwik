@@ -18,6 +18,7 @@
 // This file is injected into the registry as text, no dependencies are allowed.
 
 import { renderToString } from "@builder.io/qwik/server";
+import { render } from "@builder.io/qwik";
 import { jsx } from "@builder.io/qwik";
 import { manifest } from "@qwik-client-manifest";
 
@@ -31,17 +32,42 @@ function isJsxComponent(component) {
   return typeof component === 'object' && component && component.__pw_type === 'jsx';
 }
 
-window.playwrightMount = async (component, rootElement, hooksConfig) => {
+function assertMountNotation(component) {
   if (!isJsxComponent(component))
     throw new Error('Object mount notation is not supported');
+}
 
-  const result = await renderToString(jsx(component.type, component.props), {
-    manifest,
-    qwikLoader: { include: "always" },
+/**
+ * @param {any} value
+ */
+function __pwCreateComponent(value) {
+  return window.__pwTransformObject(value, v => {
+    if (isJsxComponent(v)) {
+      const component = v;
+      const props = component.props ? __pwCreateComponent(component.props) : {};
+      if (typeof component.type === 'string') {
+        const { children, ...propsWithoutChildren } = props;
+        return { result: jsx(component.type, propsWithoutChildren, children) };
+      }
+      return { result: jsx(component.type, props) };
+    }
   });
+}
 
-  // Set the SSR'd HTML
-  rootElement.innerHTML = result.html;
+const __pwUnmountKey = Symbol('unmountKey');
+
+window.playwrightMount = async (component, rootElement, hooksConfig) => {
+  assertMountNotation(component);
+
+  let App = () => __pwCreateComponent(component);
+  for (const hook of window.__pw_hooks_before_mount || []) {
+    const wrapper = await hook({ App, hooksConfig });
+    if (wrapper)
+      App = () => wrapper;
+  }
+
+  const unmount = await render(rootElement, App);
+  rootElement[__pwUnmountKey] = unmount;
 
   // Run after mount hooks
   for (const hook of window.__pw_hooks_after_mount || [])
@@ -49,7 +75,12 @@ window.playwrightMount = async (component, rootElement, hooksConfig) => {
 };
 
 window.playwrightUnmount = async rootElement => {
-  rootElement.innerHTML = '';
+  const unmount = rootElement[__pwUnmountKey];
+  if (!unmount)
+    throw new Error('Component was not mounted');
+
+  unmount();
+  delete rootElement[__pwUnmountKey];
 };
 
 window.playwrightUpdate = async (rootElement, component) => {

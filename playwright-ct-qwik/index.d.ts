@@ -15,7 +15,7 @@
  */
 
 import type { TestType, Locator } from '@playwright/experimental-ct-core';
-import type { JSXNode } from '@builder.io/qwik';
+import type { JSXOutput } from '@builder.io/qwik';
 
 export interface MountOptions<HooksConfig> {
   hooksConfig?: HooksConfig;
@@ -23,12 +23,12 @@ export interface MountOptions<HooksConfig> {
 
 export interface MountResult extends Locator {
   unmount(): Promise<void>;
-  update(component: JSXNode): Promise<void>;
+  update(component: JSXOutput): Promise<void>;
 }
 
 export const test: TestType<{
   mount<HooksConfig>(
-    component: JSXNode,
+    component: JSXOutput,
     options?: MountOptions<HooksConfig>
   ): Promise<MountResult>;
 }>;

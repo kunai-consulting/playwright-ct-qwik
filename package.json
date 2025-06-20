@@ -17,6 +17,7 @@
 		"test": "pnpm --stream -r test",
 		"build": "pnpm --stream -r build",
 		"release": "pnpm --stream -r release",
-		"playwright:version": "node -e \"console.log(require('./playwright-ct-solid/package.json').dependencies['@playwright/experimental-ct-core'])\""
+		"playwright:version": "node -e \"console.log(require('./playwright-ct-solid/package.json').dependencies['@playwright/experimental-ct-core'])\"",
+		"test:qwik": "pnpm -C ./ct-qwik test --ui"
 	}
 }
