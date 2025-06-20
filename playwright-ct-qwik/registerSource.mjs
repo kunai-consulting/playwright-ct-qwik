@@ -31,8 +31,13 @@ function isJsxComponent(component) {
 }
 
 function assertMountNotation(component) {
-  if (!isJsxComponent(component))
-    throw new Error('Object mount notation is not supported');
+  console.log('assertMountNotation - component:', component);
+  console.log('assertMountNotation - typeof component:', typeof component);
+  console.log('assertMountNotation - component.__pw_type:', component?.__pw_type);
+  console.log('assertMountNotation - isJsxComponent result:', isJsxComponent(component));
+  
+  // if (!isJsxComponent(component))
+  //   throw new Error('Object mount notation is not supported');
 }
 
 /**
@@ -55,6 +60,8 @@ function __pwCreateComponent(value) {
 const __pwUnmountKey = Symbol('unmountKey');
 
 window.playwrightMount = async (component, rootElement, hooksConfig) => {
+  console.log('Before mount:', rootElement.innerHTML);
+  
   assertMountNotation(component);
 
   let App = () => __pwCreateComponent(component);
@@ -65,8 +72,11 @@ window.playwrightMount = async (component, rootElement, hooksConfig) => {
   }
 
   const ssrResult = await renderToString(jsx(App, {}));
+  console.log('SSR result:', ssrResult);
 
   rootElement.innerHTML = ssrResult.html;
+  console.log('After mount:', rootElement.innerHTML);
+  
   rootElement[__pwUnmountKey] = () => {
     rootElement.innerHTML = '';
   };
