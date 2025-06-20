@@ -66,7 +66,7 @@ window.playwrightMount = async (component, rootElement, hooksConfig) => {
       App = () => wrapper;
   }
 
-  const unmount = await render(rootElement, App);
+  const unmount = await render(rootElement, App());
   rootElement[__pwUnmountKey] = unmount;
 
   // Run after mount hooks

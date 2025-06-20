@@ -1,4 +1,4 @@
-import { component$, type PropFunction, type PropsOf } from '@builder.io/qwik';
+import { component$, type PropsOf } from '@builder.io/qwik';
 
 type ButtonProps = {
   title: string;
