@@ -17,10 +17,8 @@
 // @ts-check
 // This file is injected into the registry as text, no dependencies are allowed.
 
-import { renderToString } from "@builder.io/qwik/server";
 import { render } from "@builder.io/qwik";
 import { jsx } from "@builder.io/qwik";
-import { manifest } from "@qwik-client-manifest";
 
 /** @typedef {import('@playwright/experimental-ct-core/types/component').JsxComponent} JsxComponent */
 

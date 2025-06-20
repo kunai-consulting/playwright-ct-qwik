@@ -8,7 +8,7 @@ export type HooksConfig = {
 beforeMount<HooksConfig>(async ({ hooksConfig, App }) => {
   console.log(`Before mount: ${JSON.stringify(hooksConfig)}`);
 
-  return <App />
+  // return <App />
 });
 
 afterMount<HooksConfig>(async () => {
