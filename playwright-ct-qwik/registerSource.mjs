@@ -111,6 +111,7 @@ window.playwrightMount = async (component, rootElement, hooksConfig) => {
 
   const ssrResult = await renderToString(App(), {
     containerTagName: 'div',
+    qwikLoader: { include: "always" }
   });
   console.log('SSR result:', ssrResult.html);
 
