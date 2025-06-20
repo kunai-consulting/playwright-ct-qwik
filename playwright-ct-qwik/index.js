@@ -31,7 +31,7 @@ const defineConfig = (config, ...configs) => {
 			},
 			"@playwright/experimental-ct-core": {
 				registerSourceFile: path.join(__dirname, "registerSource.mjs"),
-				frameworkPluginFactory: () => import("@builder.io/qwik/optimizer").then((qwik) => qwik.qwikVite),
+				frameworkPluginFactory: () => import("@builder.io/qwik/optimizer").then((qwik) => qwik.qwikRollup()),
 			},
 		},
 		...configs,
