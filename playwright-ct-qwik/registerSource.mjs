@@ -27,7 +27,22 @@ import { jsx } from "@builder.io/qwik";
  * @returns {component is JsxComponent}
  */
 function isJsxComponent(component) {
-  return typeof component === 'object' && component && component.__pw_type === 'jsx';
+  // Check for standard jsx components
+  if (typeof component === 'object' && component && component.__pw_type === 'jsx') {
+    return true;
+  }
+  
+  // Check for object-component types
+  if (typeof component === 'object' && component && component.__pw_type === 'object-component') {
+    return true;
+  }
+  
+  // Check for the inner component structure (the one with props)
+  if (typeof component === 'object' && component && component.props && typeof component.props === 'object') {
+    return true;
+  }
+  
+  return false;
 }
 
 function assertMountNotation(component) {
@@ -44,33 +59,27 @@ function assertMountNotation(component) {
  * @param {any} value
  */
 function __pwCreateComponent(value) {
-  console.log('=== __pwCreateComponent DEBUG ===');
-  console.log('Input value:', JSON.stringify(value, null, 2));
-  
   return window.__pwTransformObject(value, v => {
-    if (isJsxComponent(v) && v.__pw_type === 'object-component') {
-      console.log('=== OBJECT-COMPONENT PROCESSING ===');
-      console.log('Full component object:', v);
-      console.log('component.type:', v.type);
-      console.log('component.type type:', typeof v.type);
-      
-      // Try to find the actual component function
-      if (v.type && typeof v.type.type === 'function') {
-        console.log('Found component function:', v.type.type);
-        return { result: v.type };
-      } else if (v.type) {
-        console.log('Using component.type directly:', v.type);
-        return { result: v.type };
-      }
-    }
-    
-    // Handle jsx components normally
     if (isJsxComponent(v)) {
       const component = v;
       
-      // Handle object-component type (Qwik components)
+      // Handle object-component type - just return the component directly
       if (component.__pw_type === 'object-component') {
-        // For object-component, the actual component is in component.type
+        console.log('Object component type:', component.type);
+        console.log('Type of component.type:', typeof component.type);
+        console.log('Component.type keys:', Object.keys(component.type));
+        console.log('Component.type.type:', component.type.type);
+        console.log('Type of component.type.type:', typeof component.type.type);
+        console.log('Component.type.props:', component.type.props);
+        
+        // Call the component function with the props
+        if (typeof component.type.type === 'function' && component.type.props) {
+          console.log('Calling component function with props');
+          const result = component.type.type(component.type.props, component.type.key, component.type.flags);
+          console.log('Component function result:', result);
+          return { result };
+        }
+        
         return { result: component.type };
       }
       
