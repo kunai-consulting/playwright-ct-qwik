@@ -44,9 +44,37 @@ function assertMountNotation(component) {
  * @param {any} value
  */
 function __pwCreateComponent(value) {
+  console.log('=== __pwCreateComponent DEBUG ===');
+  console.log('Input value:', JSON.stringify(value, null, 2));
+  
   return window.__pwTransformObject(value, v => {
+    if (isJsxComponent(v) && v.__pw_type === 'object-component') {
+      console.log('=== OBJECT-COMPONENT PROCESSING ===');
+      console.log('Full component object:', v);
+      console.log('component.type:', v.type);
+      console.log('component.type type:', typeof v.type);
+      
+      // Try to find the actual component function
+      if (v.type && typeof v.type.type === 'function') {
+        console.log('Found component function:', v.type.type);
+        return { result: v.type };
+      } else if (v.type) {
+        console.log('Using component.type directly:', v.type);
+        return { result: v.type };
+      }
+    }
+    
+    // Handle jsx components normally
     if (isJsxComponent(v)) {
       const component = v;
+      
+      // Handle object-component type (Qwik components)
+      if (component.__pw_type === 'object-component') {
+        // For object-component, the actual component is in component.type
+        return { result: component.type };
+      }
+      
+      // Handle jsx type (traditional JSX)
       const props = component.props ? __pwCreateComponent(component.props) : {};
       if (typeof component.type === 'string') {
         const { children, ...propsWithoutChildren } = props;
@@ -64,6 +92,7 @@ window.playwrightMount = async (component, rootElement, hooksConfig) => {
   
   assertMountNotation(component);
 
+  console.log("COMPONENT", component)
   let App = () => __pwCreateComponent(component);
   for (const hook of window.__pw_hooks_before_mount || []) {
     const wrapper = await hook({ App, hooksConfig });
@@ -71,8 +100,8 @@ window.playwrightMount = async (component, rootElement, hooksConfig) => {
       App = () => wrapper;
   }
 
-  const ssrResult = await renderToString(jsx(App, {}));
-  console.log('SSR result:', ssrResult);
+  const ssrResult = await renderToString(App());
+  console.log('SSR result:', ssrResult.html);
 
   rootElement.innerHTML = ssrResult.html;
   console.log('After mount:', rootElement.innerHTML);

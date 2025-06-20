@@ -1,3 +1,5 @@
+/** @jsxImportSource @builder.io/qwik */
+
 import { component$, type PropsOf } from '@builder.io/qwik';
 
 type ButtonProps = {
